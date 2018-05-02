@@ -4,33 +4,58 @@ import * as d3 from "d3";
 
 function d3Test() {
   console.log('Hello from d3 Test function')
-  var dataset = [80, 100, 56, 120, 180, 30, 40, 120, 160];
+  // JSON datas
+  var nodeData = {
+    "name": "TOPICS", "children": [{
+        "name": "Topic A",
+        "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
+    }, {
+        "name": "Topic B",
+        "children": [{"name": "Sub B1", "size": 3}, {"name": "Sub B2", "size": 3}, {
+            "name": "Sub B3", "size": 3}]
+    }, {
+        "name": "Topic C",
+        "children": [{"name": "Sub A1", "size": 4}, {"name": "Sub A2", "size": 4}]
+    }]
+  };
 
-  var svgWidth = 500;
-  var svgHeight = 300
-  var barPadding = 5;
-  var barWidth = (svgWidth / dataset.length);
+  // Initialize variables
+  var width = 500;
+  var height = 500;
+  var radius = Math.min(width, height) / 2;
+  var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
+  // Create primary <g> element
+  var g = d3.select('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-  var svg = d3.select('svg')
-      .attr("width", svgWidth)
-      .attr("height", svgHeight);
+  // Data strucure
+  var partition = d3.partition()
+      .size([2 * Math.PI, radius]);
 
-  var barChart = svg.selectAll("rect")
-      .data(dataset)
-      .enter()
-      .append("rect")
-      .attr("y", function(d) {
-           return svgHeight - d
-      })
-      .attr("height", function(d) {
-          return d;
-      })
-      .attr("width", barWidth - barPadding)
-      .attr("transform", function (d, i) {
-          var translate = [barWidth * i, 0];
-          return "translate("+ translate +")";
-      });
+  // Find data root
+  var root = d3.hierarchy(nodeData)
+      .sum(function (d) { return d.size});
+
+  // Size arcs
+  partition(root);
+  var arc = d3.arc()
+      .startAngle(function (d) { return d.x0 })
+      .endAngle(function (d) { return d.x1 })
+      .innerRadius(function (d) { return d.y0 })
+      .outerRadius(function (d) { return d.y1 });
+
+  // Put it all together
+  g.selectAll('path')
+      .data(root.descendants())
+      .enter().append('path')
+      .attr("display", function (d) { return d.depth ? null : "none"; })
+      .attr("d", arc)
+      .style('stroke', '#fff')
+      .style("fill", function (d) { return color((d.children ? d : d.parent).data.name); });
 }
 
 export { d3Test };
