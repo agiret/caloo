@@ -16,7 +16,7 @@ gem 'sass-rails'
 gem 'simple_form'
 gem 'uglifier'
 gem 'webpacker'
-gem 'd3_rails'
+gem 'd3-rails'
 
 group :development do
   gem 'web-console', '>= 3.3.0'
