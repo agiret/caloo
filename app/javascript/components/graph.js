@@ -23,7 +23,9 @@ function d3Test() {
   var width = 500;
   var height = 500;
   var radius = Math.min(width, height) / 2;
-  var color = d3.scaleOrdinal(d3.schemeCategory20c);
+  // var color = d3.scaleOrdinal(d3.schemeCategory20c);
+  var color = d3.scaleOrdinal()
+    .range(["#62ADDB", "#7568BA", "#FF8F2B", "#6BC96D"]);
 
   // Create primary <g> element
   var g = d3.select('svg')
