@@ -3,5 +3,5 @@ import "bootstrap";
 
 console.log('Hello world from Webpacker');
 
-import { test } from '../components/graph';
-test();
+import { d3Test } from '../components/graph';
+d3Test();
